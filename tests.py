@@ -60,9 +60,19 @@ class TestSharkWithLasers(unittest.TestCase):
 
     def test_attack(self):
         animal = animals.Animal(100)
-        shark = animals.SharkWithLasers()
+        shark = animals.Shark(weapon=animals.Laser())
+        shark.weapon.owner = shark
         shark.attack(animal)
         self.assertEqual(animal.health, 85.0)
+
+
+class TestSharkWithNunchucks(unittest.TestCase):
+
+    def test_attack(self):
+        animal = animals.Animal(100)
+        shark = animals.SharkWithNunchucks()
+        shark.attack(animal)
+        self.assertEqual(animal.health, 93)
 
 
 class TestOrcaWithNunchucks(unittest.TestCase):

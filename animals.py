@@ -1,12 +1,15 @@
 class Animal(object):
 
-    def __init__(self, health=10, skill=10):
+    def __init__(self, health=10, skill=10, weapon=None):
         self.health = health
         self.skill = skill
         self.is_alive = True
+        self.weapon = weapon
 
     def attack(self, target):
         pass
+        # if self.weapon is not None:
+        #     self.weapon.attack(target)
 
     def receive_hit(self, damage):
         self.health -= damage
@@ -28,6 +31,8 @@ class Shark(Animal):
         target.receive_hit(damage=5)
 
     def attack(self, target):
+        if self.weapon is not None:
+            self.weapon.attack(target)
         self.eat(target)
 
 
@@ -47,11 +52,22 @@ class LaserMixin(Weapon):
         return 5 * skill_modifier
 
 
-class SharkWithLasers(LaserMixin, Shark):
+class Laser(LaserMixin):
+
+    # Temporary hack to get at owner's skill
+    @property
+    def skill(self):
+        return self.owner.skill
 
     def attack(self, target):
         self.shoot(target)
-        self.eat(target)
+
+
+def SharkWithLasers(*args, **kwargs):
+    # TODO remove this factory
+    shark = Shark(*args, **kwargs)
+    shark.weapon = Laser()
+    shark.weapon.owner = shark  # TODO remove
 
 
 class Orca(Animal):
@@ -77,7 +93,13 @@ class OrcaWithNunchucks(NunchuckMixin, Orca):
 
 
 class SharkWithNunchucks(NunchuckMixin, Shark):
-    pass
+
+    # Another approach to refactoring:
+    # Haven't rewritten Nunchucks yet, instead override attack().
+
+    def attack(self, target):
+        NunchuckMixin.hit(self, target)
+        Shark.attack(self, target)
 
 
 class OrcaWithLasers(LaserMixin, Orca):
