@@ -1,7 +1,8 @@
 class Animal(object):
 
-    def __init__(self, health=10):
+    def __init__(self, health=10, skill=10):
         self.health = health
+        self.skill = skill
         self.is_alive = True
 
     def attack(self, target):
@@ -37,7 +38,13 @@ class Weapon(object):
 class LaserMixin(Weapon):
 
     def shoot(self, target):
-        target.receive_hit(5)
+        damage = self.calculate_damage(target)
+        target.receive_hit(damage)
+
+    def calculate_damage(self, target):
+        # Expects to be mixed in to a class with `skill`
+        skill_modifier = 1 + (0.1 * self.skill)
+        return 5 * skill_modifier
 
 
 class SharkWithLasers(LaserMixin, Shark):
