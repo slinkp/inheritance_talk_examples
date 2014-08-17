@@ -7,9 +7,8 @@ class Animal(object):
         self.weapon = weapon
 
     def attack(self, target):
-        pass
-        # if self.weapon is not None:
-        #     self.weapon.attack(target)
+        if self.weapon is not None:
+            self.weapon.attack(target, skill=self.skill)
 
     def receive_hit(self, damage):
         self.health -= damage
@@ -31,8 +30,7 @@ class Shark(Animal):
         target.receive_hit(damage=5)
 
     def attack(self, target):
-        if self.weapon is not None:
-            self.weapon.attack(target)
+        super(Shark, self).attack(target)
         self.eat(target)
 
 
@@ -40,34 +38,21 @@ class Weapon(object):
     pass
 
 
-class LaserMixin(Weapon):
+class Laser(Weapon):
 
-    def shoot(self, target):
-        damage = self.calculate_damage(target)
-        target.receive_hit(damage)
-
-    def calculate_damage(self, target):
+    def calculate_damage(self, skill):
         # Expects to be mixed in to a class with `skill`
-        skill_modifier = 1 + (0.1 * self.skill)
+        skill_modifier = 1 + (0.1 * skill)
         return 5 * skill_modifier
 
-
-class Laser(LaserMixin):
-
-    # Temporary hack to get at owner's skill
-    @property
-    def skill(self):
-        return self.owner.skill
-
-    def attack(self, target):
-        self.shoot(target)
+    def attack(self, target, skill=0):
+        damage = self.calculate_damage(skill)
+        target.receive_hit(damage)
 
 
 def SharkWithLasers(*args, **kwargs):
-    # TODO remove this factory
     shark = Shark(*args, **kwargs)
     shark.weapon = Laser()
-    shark.weapon.owner = shark  # TODO remove
 
 
 class Orca(Animal):
@@ -76,6 +61,7 @@ class Orca(Animal):
         target.receive_hit(damage=10)
 
     def attack(self, target):
+        super(Orca, self).attack(target)
         self.eat(target)
 
 
@@ -102,8 +88,9 @@ class SharkWithNunchucks(NunchuckMixin, Shark):
         Shark.attack(self, target)
 
 
-class OrcaWithLasers(LaserMixin, Orca):
-    pass
+def OrcaWithLasers(*args, **kwargs):
+    orca = Orca(*args, **kwargs)
+    orca.weapon = Laser()
 
 
 class ArmorProxy(object):
