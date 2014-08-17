@@ -50,11 +50,6 @@ class Laser(Weapon):
         target.receive_hit(damage)
 
 
-def SharkWithLasers(*args, **kwargs):
-    shark = Shark(*args, **kwargs)
-    shark.weapon = Laser()
-
-
 class Orca(Animal):
 
     def eat(self, target):
@@ -65,26 +60,19 @@ class Orca(Animal):
         self.eat(target)
 
 
-class NunchuckMixin(Weapon):
+class Nunchuck(Weapon):
 
-    def hit(self, target):
+    def attack(self, target, skill):
         target.receive_hit(damage=2)
 
 
-class OrcaWithNunchucks(NunchuckMixin, Orca):
-
-    def attack(self, target):
-        self.hit(target)
-        self.eat(target)
-
-
-class SharkWithNunchucks(NunchuckMixin, Shark):
+class SharkWithNunchucks(Nunchuck, Shark):
 
     # Another approach to refactoring:
     # Haven't rewritten Nunchucks yet, instead override attack().
 
     def attack(self, target):
-        NunchuckMixin.hit(self, target)
+        Nunchuck().attack(target, self.skill)
         Shark.attack(self, target)
 
 

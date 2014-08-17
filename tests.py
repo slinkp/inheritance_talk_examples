@@ -79,7 +79,8 @@ class TestOrcaWithNunchucks(unittest.TestCase):
 
     def test_attack(self):
         animal = animals.Animal(100)
-        orca = animals.OrcaWithNunchucks()
+        weapon = animals.Nunchuck()
+        orca = animals.Orca(weapon=weapon)
         orca.attack(animal)
         self.assertEqual(animal.health, 88)
 
