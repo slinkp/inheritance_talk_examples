@@ -84,9 +84,12 @@ class OrcaWithLasers(LaserMixin, Orca):
     pass
 
 
-class ArmorMixin(object):
+class ArmorProxy(object):
 
     armor_health = 10
+
+    def __init__(self, wearer):
+        self.wearer = wearer
 
     def receive_hit(self, damage):
         """
@@ -94,21 +97,8 @@ class ArmorMixin(object):
         """
         self.armor_health -= damage
         if self.armor_health < 0:
-            super(ArmorMixin, self).receive_hit(-self.armor_health)
+            self.wearer.receive_hit(-self.armor_health)
             self.armor_health = 0
 
-
-class ArmoredSharkWithLasers(ArmorMixin, SharkWithLasers):
-    pass
-
-
-class ArmoredSharkWithNunchucks(ArmorMixin, SharkWithNunchucks):
-    pass
-
-
-class ArmoredOrcaWithLasers(ArmorMixin, OrcaWithLasers):
-    pass
-
-
-class ArmoredOrcaWithNunchucks(ArmorMixin, OrcaWithNunchucks):
-    pass
+    def __getattr__(self, name):
+        return getattr(self.wearer, name)

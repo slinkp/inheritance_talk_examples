@@ -74,23 +74,26 @@ class TestOrcaWithNunchucks(unittest.TestCase):
         self.assertEqual(animal.health, 88)
 
 
-class TestArmorMixin(unittest.TestCase):
+class TestArmorProxy(unittest.TestCase):
 
     def test_receive_hit(self):
-        shark = animals.ArmoredSharkWithLasers(health=10)
+        inner = animals.Shark(health=10)
+        shark = animals.ArmorProxy(wearer=inner)
 
         shark.receive_hit(9)
-        self.assertEqual(shark.health, 10)
+        self.assertEqual(shark.health, inner.health, 10)
         self.assertEqual(shark.armor_health, 1)
 
         shark.receive_hit(1)
-        self.assertEqual(shark.health, 10)
+        self.assertEqual(shark.health, inner.health, 10)
         self.assertEqual(shark.armor_health, 0)
 
         shark.receive_hit(1)
-        self.assertEqual(shark.health, 9)
+        self.assertEqual(shark.health, inner.health, 9)
         self.assertEqual(shark.armor_health, 0)
 
         shark.receive_hit(9)
-        self.assertEqual(shark.health, 0)
+        self.assertEqual(shark.health, inner.health, 0)
         self.assertEqual(shark.armor_health, 0)
+        self.assertFalse(shark.is_alive)
+        self.assertEqual(shark.is_alive, inner.is_alive)
