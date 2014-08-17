@@ -70,7 +70,8 @@ class TestSharkWithNunchucks(unittest.TestCase):
 
     def test_attack(self):
         animal = animals.Animal(100)
-        shark = animals.SharkWithNunchucks()
+        weapon = animals.Nunchuck()
+        shark = animals.Shark(weapon=weapon)
         shark.attack(animal)
         self.assertEqual(animal.health, 93)
 

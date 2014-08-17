@@ -66,21 +66,6 @@ class Nunchuck(Weapon):
         target.receive_hit(damage=2)
 
 
-class SharkWithNunchucks(Nunchuck, Shark):
-
-    # Another approach to refactoring:
-    # Haven't rewritten Nunchucks yet, instead override attack().
-
-    def attack(self, target):
-        Nunchuck().attack(target, self.skill)
-        Shark.attack(self, target)
-
-
-def OrcaWithLasers(*args, **kwargs):
-    orca = Orca(*args, **kwargs)
-    orca.weapon = Laser()
-
-
 class ArmorProxy(object):
 
     armor_health = 10
